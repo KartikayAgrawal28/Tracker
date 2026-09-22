@@ -7,7 +7,7 @@
   /* Surfaces & Backgrounds */
   --bg-body: #f8fafc;
   --bg-card: #ffffff;
-  --bg-card-subtle: rgba(210, 13, 13, 0.7);
+  --bg-card-subtle: rgb(255, 255, 255);
   --bg-card-hover: rgba(248, 250, 252, 0.9);
   --bg-header: rgb(255, 255, 255);
   --bg-footer: rgb(5, 15, 50);
