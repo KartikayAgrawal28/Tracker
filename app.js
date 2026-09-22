@@ -668,13 +668,13 @@
       clearAuthAlert();
       if (isSignUpMode) {
         authModalTitle.textContent = 'Create Account';
-        authModalSubtitle.textContent = 'Join Code Arena to start tracking your DSA journey';
+        authModalSubtitle.textContent = 'Join DSA Tracker to start tracking your DSA journey';
         authBtnText.textContent = 'Sign Up';
         authTogglePrompt.textContent = 'Already have an account?';
         authToggleModeBtn.textContent = 'Sign in';
       } else {
         authModalTitle.textContent = 'Welcome Back';
-        authModalSubtitle.textContent = 'Sign in to Code Arena to sync your progress across devices';
+        authModalSubtitle.textContent = 'Sign in to DSA Tracker to sync your progress across devices';
         authBtnText.textContent = 'Sign In';
         authTogglePrompt.textContent = "Don't have an account?";
         authToggleModeBtn.textContent = 'Sign up';

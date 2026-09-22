@@ -1,4 +1,4 @@
-# Code Arena — DSA Pattern Mastery Tracker by Kartikay 🚀
+# DSA Tracker — Pattern Mastery Roadmap 🚀
 
 A modern, high-performance, dynamic DSA tracker built with HTML5, Tailwind CSS, and vanilla JavaScript. Designed specifically for practicing and mastering patterns across all 500 curated LeetCode problems.
 
