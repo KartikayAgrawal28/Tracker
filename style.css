@@ -55,3 +55,25 @@ body {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
+/* Modal Animations */
+@keyframes modalSlideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(16px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+#auth-modal:not(.hidden) > div,
+#random-modal:not(.hidden) > div {
+  animation: modalSlideUp 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+#auth-modal,
+#random-modal {
+  transition: opacity 0.2s ease-in-out;
+}
+
