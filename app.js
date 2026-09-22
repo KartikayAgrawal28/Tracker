@@ -1,9 +1,48 @@
 // DSA Pattern Mastery Tracker Logic
 (function () {
   const STORAGE_KEY = 'dsa_tracker_completed_ids_v1';
+  const THEME_KEY = 'dsa_tracker_theme';
   let dsaData = [];
   let solvedSet = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'));
   let isAllExpanded = false;
+  const expandedCategories = new Set();
+  const collapsedPatterns = new Set();
+
+  // --- THEME SYSTEM (Light & Dark Mode) ---
+  const themeBtn = document.getElementById('theme-toggle-btn');
+  const sunIcon = document.getElementById('theme-sun-icon');
+  const moonIcon = document.getElementById('theme-moon-icon');
+
+  function applyTheme(theme) {
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      if (sunIcon) sunIcon.classList.remove('hidden');
+      if (moonIcon) moonIcon.classList.add('hidden');
+    } else {
+      document.documentElement.classList.remove('dark');
+      if (sunIcon) sunIcon.classList.add('hidden');
+      if (moonIcon) moonIcon.classList.remove('hidden');
+    }
+    localStorage.setItem(THEME_KEY, theme);
+  }
+
+  function initTheme() {
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if (savedTheme) {
+      applyTheme(savedTheme);
+    } else {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      applyTheme(prefersDark ? 'dark' : 'light');
+    }
+  }
+
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      applyTheme(isDark ? 'light' : 'dark');
+    });
+  }
+  initTheme();
 
   // --- FIREWORKS SYSTEM (60fps Canvas Particle Physics) ---
   const canvas = document.getElementById('fireworks-canvas');
@@ -80,7 +119,6 @@
   // --- SAVE & STATS LOGIC ---
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(solvedSet)));
-    updateStats();
   }
 
   function updateStats() {
@@ -110,18 +148,71 @@
     const solvedCount = solvedSet.size;
     const pct = total === 0 ? 0 : Math.round((solvedCount / total) * 100);
 
-    document.getElementById('stat-total').innerHTML = `${solvedCount} <span class="text-sm font-normal text-slate-500">/ ${total}</span>`;
-    document.getElementById('stat-percent').innerText = `${pct}%`;
-    document.getElementById('stat-progress-bar').style.width = `${pct}%`;
+    const totalEl = document.getElementById('stat-total');
+    if (totalEl) totalEl.innerHTML = `${solvedCount} <span class="text-sm font-normal text-slate-400 dark:text-slate-500">/ ${total}</span>`;
+    
+    const pctEl = document.getElementById('stat-percent');
+    if (pctEl) pctEl.innerText = `${pct}%`;
+    
+    const barEl = document.getElementById('stat-progress-bar');
+    if (barEl) barEl.style.width = `${pct}%`;
 
-    document.getElementById('stat-easy').innerText = easySolved;
-    document.getElementById('stat-easy-sub').innerText = `${easySolved} / ${easyTotal} Solved`;
+    const easyEl = document.getElementById('stat-easy');
+    if (easyEl) easyEl.innerText = easySolved;
+    const easySub = document.getElementById('stat-easy-sub');
+    if (easySub) easySub.innerText = `${easySolved} / ${easyTotal} Solved`;
 
-    document.getElementById('stat-med').innerText = medSolved;
-    document.getElementById('stat-med-sub').innerText = `${medSolved} / ${medTotal} Solved`;
+    const medEl = document.getElementById('stat-med');
+    if (medEl) medEl.innerText = medSolved;
+    const medSub = document.getElementById('stat-med-sub');
+    if (medSub) medSub.innerText = `${medSolved} / ${medTotal} Solved`;
 
-    document.getElementById('stat-hard').innerText = hardSolved;
-    document.getElementById('stat-hard-sub').innerText = `${hardSolved} / ${hardTotal} Solved`;
+    const hardEl = document.getElementById('stat-hard');
+    if (hardEl) hardEl.innerText = hardSolved;
+    const hardSub = document.getElementById('stat-hard-sub');
+    if (hardSub) hardSub.innerText = `${hardSolved} / ${hardTotal} Solved`;
+  }
+
+  function getRowClass(isDone) {
+    return `group flex items-center justify-between gap-3 p-3 rounded-xl border transition-all duration-200 ${
+      isDone 
+        ? 'bg-slate-50/70 dark:bg-surface-900/40 border-slate-200/60 dark:border-surface-800/40 opacity-70' 
+        : 'bg-white dark:bg-surface-900/90 border-slate-200 dark:border-surface-800 hover:border-indigo-300 dark:hover:border-surface-700 hover:bg-slate-50/80 dark:hover:bg-surface-850/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)]'
+    }`;
+  }
+
+  function updateCategoryDOM(catCard, catObj) {
+    let catSolved = 0;
+    let catTotal = 0;
+    catObj.patterns.forEach(pat => {
+      pat.questions.forEach(q => {
+        catTotal++;
+        if (solvedSet.has(q.id)) catSolved++;
+      });
+    });
+
+    const catPercent = catTotal === 0 ? 0 : Math.round((catSolved / catTotal) * 100);
+    const countEl = catCard.querySelector('.cat-count');
+    if (countEl) countEl.innerText = `(${catSolved}/${catTotal})`;
+
+    const barEl = catCard.querySelector('.cat-progress-fill');
+    if (barEl) barEl.style.width = `${catPercent}%`;
+
+    const badgeEl = catCard.querySelector('.cat-badge');
+    if (badgeEl) {
+      badgeEl.innerText = `${catPercent}% Done`;
+      badgeEl.className = `cat-badge text-xs px-2.5 py-1 rounded-full font-mono font-medium transition ${
+        catPercent === 100 
+          ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800/50' 
+          : 'bg-slate-100 dark:bg-surface-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-surface-700/60'
+      }`;
+    }
+  }
+
+  function updatePatternDOM(patCard, pat) {
+    const patSolved = pat.questions.filter(q => solvedSet.has(q.id)).length;
+    const countEl = patCard.querySelector('.pat-count');
+    if (countEl) countEl.innerText = `(${patSolved}/${pat.questions.length})`;
   }
 
   // --- RENDER ACCORDIONS ---
@@ -135,12 +226,12 @@
     container.innerHTML = '';
     let totalVisible = 0;
 
-    dsaData.forEach((catObj, catIdx) => {
+    dsaData.forEach((catObj) => {
       let catSolved = 0;
       let catTotal = 0;
       let catMatchingPatterns = [];
 
-      catObj.patterns.forEach((patObj, patIdx) => {
+      catObj.patterns.forEach((patObj) => {
         let matchingQuestions = [];
 
         patObj.questions.forEach(q => {
@@ -173,7 +264,8 @@
           catMatchingPatterns.push({
             name: patObj.name,
             questions: matchingQuestions,
-            totalUnderPattern: patObj.questions.length
+            totalUnderPattern: patObj.questions.length,
+            originalPatternObj: patObj
           });
         }
       });
@@ -183,101 +275,106 @@
 
       // Create Category Accordion Card
       const catCard = document.createElement('div');
-      catCard.className = 'border border-surface-800/80 rounded-2xl bg-surface-900/80 overflow-hidden shadow-sm hover:border-surface-700/80 transition-colors';
+      catCard.className = 'border border-slate-200 dark:border-surface-800/80 rounded-2xl bg-white/90 dark:bg-surface-900/80 overflow-hidden shadow-sm hover:border-slate-300 dark:hover:border-surface-700/80 transition-colors';
 
       const catPercent = catTotal === 0 ? 0 : Math.round((catSolved / catTotal) * 100);
-      const isExpanded = isAllExpanded || searchVal.length > 0;
+      const isExpanded = isAllExpanded || searchVal.length > 0 || expandedCategories.has(catObj.category);
 
       // Category Header
       const catHeader = document.createElement('div');
-      catHeader.className = 'cursor-pointer px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-850/50 hover:bg-surface-850 transition select-none';
+      catHeader.className = 'cursor-pointer px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/70 dark:bg-surface-850/50 hover:bg-slate-100/80 dark:hover:bg-surface-850 transition select-none';
       catHeader.innerHTML = `
         <div class="flex items-center gap-3">
-          <span class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center text-sm font-bold">
+          <span class="w-8 h-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm font-bold flex-shrink-0">
             📁
           </span>
           <div>
-            <h2 class="text-base sm:text-lg font-bold text-slate-100 flex items-center gap-2">
+            <h2 class="text-base sm:text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
               ${catObj.category}
-              <span class="text-xs font-normal text-slate-400 font-mono">(${catSolved}/${catTotal})</span>
+              <span class="cat-count text-xs font-normal text-slate-500 dark:text-slate-400 font-mono">(${catSolved}/${catTotal})</span>
             </h2>
-            <div class="w-32 bg-surface-800 rounded-full h-1 mt-1 overflow-hidden">
-              <div class="bg-indigo-500 h-1 rounded-full transition-all" style="width: ${catPercent}%"></div>
+            <div class="w-32 bg-slate-200 dark:bg-surface-800 rounded-full h-1 mt-1.5 overflow-hidden">
+              <div class="cat-progress-fill bg-indigo-600 dark:bg-indigo-500 h-1 rounded-full transition-all duration-300" style="width: ${catPercent}%"></div>
             </div>
           </div>
         </div>
 
         <div class="flex items-center gap-3 self-end sm:self-center">
-          <span class="text-xs px-2.5 py-1 rounded-full font-mono font-medium ${catPercent === 100 ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-800/50' : 'bg-surface-800 text-slate-400'}">
+          <span class="cat-badge text-xs px-2.5 py-1 rounded-full font-mono font-medium transition ${
+            catPercent === 100 
+              ? 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-800/50' 
+              : 'bg-slate-100 dark:bg-surface-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-surface-700/60'
+          }">
             ${catPercent}% Done
           </span>
-          <span class="text-slate-400 text-sm font-mono transition-transform duration-200 cat-arrow">${isExpanded ? '▼' : '▶'}</span>
+          <span class="text-slate-400 dark:text-slate-500 text-sm font-mono transition-transform duration-200 cat-arrow">${isExpanded ? '▼' : '▶'}</span>
         </div>
       `;
 
       // Category Body
       const catBody = document.createElement('div');
-      catBody.className = `p-4 sm:p-5 space-y-4 border-t border-surface-800/60 ${isExpanded ? '' : 'hidden'}`;
+      catBody.className = `p-4 sm:p-5 space-y-4 border-t border-slate-200 dark:border-surface-800/60 ${isExpanded ? '' : 'hidden'}`;
 
       // Render Nested Patterns (Sub-dropdowns)
-      catMatchingPatterns.forEach((pat, patIdx) => {
+      catMatchingPatterns.forEach((pat) => {
         const patCard = document.createElement('div');
-        patCard.className = 'border border-surface-800/60 rounded-xl bg-surface-950/40 p-4';
+        patCard.className = 'border border-slate-200/90 dark:border-surface-800/60 rounded-xl bg-slate-50/50 dark:bg-surface-950/40 p-4 transition-colors';
 
         const patSolved = pat.questions.filter(q => solvedSet.has(q.id)).length;
+        const patKey = `${catObj.category}::${pat.name}`;
+        const isPatCollapsed = collapsedPatterns.has(patKey);
 
         // Pattern Header
         const patHeader = document.createElement('div');
         patHeader.className = 'flex items-center justify-between cursor-pointer mb-3 select-none group';
         patHeader.innerHTML = `
           <div class="flex items-center gap-2">
-            <span class="text-indigo-400 font-bold group-hover:translate-x-0.5 transition-transform">↳</span>
-            <span class="text-sm sm:text-base font-semibold text-slate-200 group-hover:text-indigo-300 transition-colors">
+            <span class="text-indigo-600 dark:text-indigo-400 font-bold group-hover:translate-x-0.5 transition-transform">↳</span>
+            <span class="text-sm sm:text-base font-semibold text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors">
               ${pat.name}
             </span>
-            <span class="text-xs text-slate-500 font-mono">(${patSolved}/${pat.questions.length})</span>
+            <span class="pat-count text-xs text-slate-500 font-mono">(${patSolved}/${pat.questions.length})</span>
           </div>
-          <span class="text-xs text-slate-500 group-hover:text-slate-300">Toggle</span>
+          <span class="pat-toggle-text text-xs text-slate-400 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors">
+            ${isPatCollapsed ? 'Show' : 'Hide'}
+          </span>
         `;
 
         const qContainer = document.createElement('div');
-        qContainer.className = 'space-y-2 mt-2';
+        qContainer.className = `space-y-2 mt-2 ${isPatCollapsed ? 'hidden' : ''}`;
 
         pat.questions.forEach(q => {
           const isDone = solvedSet.has(q.id);
           const qRow = document.createElement('div');
-          qRow.className = `group flex items-center justify-between gap-3 p-3 rounded-xl border transition-all duration-200 ${
-            isDone 
-              ? 'bg-surface-900/40 border-surface-800/40 opacity-70' 
-              : 'bg-surface-900/90 border-surface-800 hover:border-surface-700 hover:bg-surface-850/60'
-          }`;
+          qRow.className = getRowClass(isDone);
 
-          let diffBadge = 'text-emerald-400 bg-emerald-950/30 border-emerald-800/40';
-          if (q.diff === 'Medium') diffBadge = 'text-amber-400 bg-amber-950/30 border-amber-800/40';
-          if (q.diff === 'Hard') diffBadge = 'text-rose-400 bg-rose-950/30 border-rose-800/40';
+          let diffBadge = 'text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border-emerald-200 dark:border-emerald-800/40';
+          if (q.diff === 'Medium') diffBadge = 'text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800/40';
+          if (q.diff === 'Hard') diffBadge = 'text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/30 border-rose-200 dark:border-rose-800/40';
 
           qRow.innerHTML = `
             <div class="flex items-center gap-3 min-w-0 flex-1">
-              <label class="relative flex items-center justify-center cursor-pointer">
+              <label class="relative flex items-center justify-center cursor-pointer p-0.5" onclick="event.stopPropagation()">
                 <input 
                   type="checkbox" 
                   data-qid="${q.id}"
-                  class="checkbox-animate w-5 h-5 rounded-lg border-2 border-surface-700 bg-surface-950 text-indigo-600 focus:ring-0 cursor-pointer checked:bg-indigo-600 checked:border-indigo-600 transition"
+                  class="checkbox-animate w-5 h-5 rounded-lg border-2 border-slate-300 dark:border-surface-700 bg-white dark:bg-surface-950 text-indigo-600 focus:ring-0 cursor-pointer checked:bg-indigo-600 checked:border-indigo-600 transition"
                   ${isDone ? 'checked' : ''}
                 />
               </label>
 
-              <span class="text-xs font-mono text-slate-500 font-medium">#${q.id}</span>
+              <span class="text-xs font-mono text-slate-400 dark:text-slate-500 font-medium flex-shrink-0">#${q.id}</span>
 
               <a 
                 href="${q.link}" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                class="text-sm font-medium text-slate-200 group-hover:text-indigo-300 hover:underline truncate flex items-center gap-1.5 transition"
+                class="text-sm font-medium text-slate-800 dark:text-slate-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-300 hover:underline truncate flex items-center gap-1.5 transition"
                 title="${q.title}"
+                onclick="event.stopPropagation()"
               >
-                <span class="${isDone ? 'line-through text-slate-500' : ''}">${q.title}</span>
-                <svg class="w-3.5 h-3.5 text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                <span class="q-title ${isDone ? 'line-through text-slate-400 dark:text-slate-500' : ''}">${q.title}</span>
+                <svg class="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
               </a>
             </div>
 
@@ -288,25 +385,61 @@
             </div>
           `;
 
-          // Checkbox handler + Fireworks Trigger
+          // Checkbox handler + In-place State Updates (PREVENTS DROPDOWN CLOSING)
           const checkbox = qRow.querySelector('input[type="checkbox"]');
           checkbox.addEventListener('change', (e) => {
+            e.stopPropagation();
+            const checked = e.target.checked;
             const rect = checkbox.getBoundingClientRect();
-            if (e.target.checked) {
+            
+            if (checked) {
               solvedSet.add(q.id);
               launchFireworks(rect.left + rect.width / 2, rect.top + rect.height / 2);
             } else {
               solvedSet.delete(q.id);
             }
             saveState();
-            renderTree();
+
+            // Check if active status filter requires re-filtering
+            const currentStatusFilter = document.getElementById('status-filter').value;
+            if (currentStatusFilter !== 'ALL') {
+              // Ensure this category is marked expanded before re-rendering
+              expandedCategories.add(catObj.category);
+              renderTree();
+              return;
+            }
+
+            // In-place UI update without collapsing dropdown
+            qRow.className = getRowClass(checked);
+            const titleSpan = qRow.querySelector('.q-title');
+            if (titleSpan) {
+              if (checked) {
+                titleSpan.classList.add('line-through', 'text-slate-400', 'dark:text-slate-500');
+              } else {
+                titleSpan.classList.remove('line-through', 'text-slate-400', 'dark:text-slate-500');
+              }
+            }
+
+            // In-place update pattern & category counts
+            updatePatternDOM(patCard, pat);
+            updateCategoryDOM(catCard, catObj);
+            updateStats();
           });
 
           qContainer.appendChild(qRow);
         });
 
-        patHeader.addEventListener('click', () => {
-          qContainer.classList.toggle('hidden');
+        patHeader.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isNowHidden = qContainer.classList.toggle('hidden');
+          const toggleText = patHeader.querySelector('.pat-toggle-text');
+          if (isNowHidden) {
+            collapsedPatterns.add(patKey);
+            if (toggleText) toggleText.innerText = 'Show';
+          } else {
+            collapsedPatterns.delete(patKey);
+            if (toggleText) toggleText.innerText = 'Hide';
+          }
         });
 
         patCard.appendChild(patHeader);
@@ -315,9 +448,15 @@
       });
 
       catHeader.addEventListener('click', () => {
-        catBody.classList.toggle('hidden');
+        const isHidden = catBody.classList.toggle('hidden');
         const arrow = catHeader.querySelector('.cat-arrow');
-        arrow.textContent = catBody.classList.contains('hidden') ? '▶' : '▼';
+        if (isHidden) {
+          arrow.textContent = '▶';
+          expandedCategories.delete(catObj.category);
+        } else {
+          arrow.textContent = '▼';
+          expandedCategories.add(catObj.category);
+        }
       });
 
       catCard.appendChild(catHeader);
@@ -327,8 +466,8 @@
 
     if (totalVisible === 0) {
       container.innerHTML = `
-        <div class="text-center py-16 bg-surface-900/40 border border-surface-800 rounded-2xl p-6">
-          <p class="text-slate-400 text-sm">No problems found matching your current search or filters.</p>
+        <div class="text-center py-16 bg-white dark:bg-surface-900/40 border border-slate-200 dark:border-surface-800 rounded-2xl p-6 shadow-sm dark:shadow-none">
+          <p class="text-slate-500 dark:text-slate-400 text-sm">No problems found matching your current search or filters.</p>
         </div>
       `;
     }
@@ -354,7 +493,15 @@
 
   document.getElementById('toggle-all-btn').addEventListener('click', () => {
     isAllExpanded = !isAllExpanded;
-    document.getElementById('toggle-all-btn').innerText = isAllExpanded ? 'Collapse All' : 'Expand All';
+    if (isAllExpanded) {
+      dsaData.forEach(c => expandedCategories.add(c.category));
+      collapsedPatterns.clear();
+      document.getElementById('toggle-all-btn').innerText = 'Collapse All';
+    } else {
+      expandedCategories.clear();
+      collapsedPatterns.clear();
+      document.getElementById('toggle-all-btn').innerText = 'Expand All';
+    }
     renderTree();
   });
 

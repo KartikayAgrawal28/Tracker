@@ -15,15 +15,23 @@
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #090d16;
+  background: transparent;
 }
-::-webkit-scrollbar-thumb {
+html.dark ::-webkit-scrollbar-thumb {
   background-color: #1e293b;
   border-radius: 9999px;
   border: 2px solid #090d16;
 }
-::-webkit-scrollbar-thumb:hover {
+html.dark ::-webkit-scrollbar-thumb:hover {
   background-color: #334155;
+}
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+  border: 2px solid #f8fafc;
+}
+html:not(.dark) ::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
 }
 
 /* Accordion Transition */
@@ -41,3 +49,9 @@
 .checkbox-animate:checked {
   animation: checkPulse 0.25s ease-out;
 }
+
+/* Smooth color transitions for theme toggle */
+body {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
