@@ -1,6 +1,6 @@
 # DSA Tracker — Pattern Mastery Roadmap 🚀
 
-A modern, high-performance, dynamic DSA tracker built with HTML5, Tailwind CSS, and vanilla JavaScript. Designed specifically for practicing and mastering patterns across all 500 curated LeetCode problems.
+A modern, high-performance, dynamic DSA tracker built with HTML5, Pure Vanilla CSS, and JavaScript. Designed specifically for practicing and mastering patterns across all 500 curated LeetCode problems.
 
 ---
 

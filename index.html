@@ -10,7 +10,6 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
     rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css">
   <script>
     // Theme initializer to prevent flash of wrong theme
@@ -22,88 +21,48 @@
         document.documentElement.classList.add('dark');
       }
     })();
-
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
-            mono: ['"JetBrains Mono"', 'monospace']
-          },
-          colors: {
-            surface: {
-              950: '#090d16',
-              900: '#0f172a',
-              850: '#151f38',
-              800: '#1e293b',
-              700: '#334155'
-            },
-            primary: {
-              400: '#818cf8',
-              500: '#6366f1',
-              600: '#4f46e5'
-            }
-          }
-        }
-      }
-    }
   </script>
 </head>
 
-<body
-  class="bg-slate-50 text-slate-800 dark:bg-surface-950 dark:text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white transition-colors duration-200">
+<body>
   <!-- Fireworks Canvas Layer -->
   <canvas id="fireworks-canvas"></canvas>
 
   <!-- Interactive Custom Cursor Follower -->
-  <div id="cursor-glow"
-    class="custom-cursor fixed top-0 left-0 w-80 h-80 rounded-full bg-indigo-500/10 dark:bg-indigo-500/15 blur-3xl pointer-events-none z-0 transition-opacity duration-300 opacity-0 hidden sm:block will-change-transform">
-  </div>
-  <div id="cursor-ring"
-    class="custom-cursor fixed top-0 left-0 w-9 h-9 rounded-full border border-indigo-500/60 dark:border-indigo-400/70 pointer-events-none z-[99998] transition-[width,height,border-color,background-color] duration-150 ease-out opacity-0 hidden sm:block will-change-transform">
-  </div>
-  <div id="cursor-dot"
-    class="custom-cursor fixed top-0 left-0 w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400 pointer-events-none z-[99999] transition-opacity duration-200 opacity-0 hidden sm:block will-change-transform">
-  </div>
+  <div id="cursor-glow" class="custom-cursor"></div>
+  <div id="cursor-ring" class="custom-cursor"></div>
+  <div id="cursor-dot" class="custom-cursor"></div>
 
-  <!-- Top Navigation Header Bar with Enhanced Depth & Elevation -->
-  <header
-    class="sticky top-0 z-40 w-full border-b border-slate-200/90 dark:border-surface-800/90 bg-white/90 dark:bg-surface-950/90 backdrop-blur-xl shadow-lg shadow-slate-900/5 dark:shadow-2xl dark:shadow-black/70 transition-all">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5 flex flex-wrap items-center justify-between gap-4">
+  <!-- Top Navigation Header Bar -->
+  <header class="site-header">
+    <div class="container nav-wrapper">
       
-      <!-- Left Side: 1. Sign In (Leftmost) + 2. Brand: Code Arena -->
-      <div class="flex items-center flex-wrap gap-3 sm:gap-4">
-        <!-- 1. Option for Sign In (Leftmost) -->
-        <button id="login-open-btn"
-          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white text-xs sm:text-sm font-semibold shadow-md shadow-indigo-600/25 transition-all hover:scale-[1.02] active:scale-[0.98]">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Left Side: Sign In + Brand -->
+      <div class="nav-left">
+        <!-- Sign In Button -->
+        <button id="login-open-btn" class="btn-primary">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
           </svg>
           <span>Sign In</span>
         </button>
 
-        <!-- Logged-in User Profile Menu (Alternate state) -->
-        <div id="user-profile-menu"
-          class="hidden items-center gap-2.5 bg-slate-100 dark:bg-surface-850 border border-slate-200 dark:border-surface-700/80 rounded-xl px-3 py-2 shadow-sm">
-          <div id="user-avatar"
-            class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-bold text-xs flex items-center justify-center uppercase shadow-inner">
+        <!-- Logged-in User Profile Menu -->
+        <div id="user-profile-menu" class="user-profile-menu hidden">
+          <div id="user-avatar" class="user-avatar">
             U
           </div>
-          <div class="flex flex-col text-left">
-            <span id="user-display-name"
-              class="text-xs font-bold text-slate-800 dark:text-slate-100 max-w-[110px] sm:max-w-[130px] truncate leading-tight">
+          <div class="user-info">
+            <span id="user-display-name" class="user-name">
               User
             </span>
-            <span class="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 leading-none mt-0.5">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse"></span> Online
+            <span class="user-status">
+              <span class="status-dot"></span> Online
             </span>
           </div>
-          <button id="logout-btn" title="Sign Out"
-            class="ml-1.5 p-1.5 text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-lg transition"
-            aria-label="Sign Out">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <button id="logout-btn" class="logout-btn" title="Sign Out" aria-label="Sign Out">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
@@ -111,51 +70,41 @@
         </div>
 
         <!-- Vertical Separator -->
-        <div class="h-6 w-px bg-slate-200 dark:bg-surface-800 hidden sm:block"></div>
+        <div class="nav-divider"></div>
 
-        <!-- 2. Brand Name: DSA Tracker -->
-        <div class="flex items-center gap-2.5">
-          <span
-            class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-purple-600 text-white font-mono font-bold text-xs sm:text-sm flex items-center justify-center shadow-md shadow-indigo-500/20">
-            &lt;/&gt;
-          </span>
-          <span class="font-extrabold text-base sm:text-xl bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 dark:from-indigo-400 dark:via-purple-300 dark:to-pink-400 bg-clip-text text-transparent tracking-tight">
-            DSA Tracker
-          </span>
+        <!-- Brand Name: DSA Tracker -->
+        <div class="brand-group">
+          <span class="brand-icon">&lt;/&gt;</span>
+          <span class="brand-name">DSA Tracker</span>
         </div>
       </div>
 
-      <!-- Right Side: 3. Pick Random + 4. Reset Button + 5. Theme Button -->
-      <div class="flex items-center gap-2.5 sm:gap-3">
-        <!-- 3. Pick Random Button -->
-        <button id="random-btn"
-          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-semibold shadow-md shadow-indigo-600/25 transition-all hover:scale-[1.02] active:scale-[0.98]">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Right Side: Random + Reset + Theme Toggle -->
+      <div class="nav-right">
+        <!-- Pick Random Button -->
+        <button id="random-btn" class="btn-indigo">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-            </path>
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
           <span>Pick Random</span>
         </button>
 
-        <!-- 4. Reset Button -->
-        <button id="reset-btn"
-          class="px-3.5 py-2.5 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/30 dark:hover:bg-rose-900/50 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-800/40 text-xs sm:text-sm font-medium transition shadow-sm">
+        <!-- Reset Button -->
+        <button id="reset-btn" class="btn-reset">
           Reset
         </button>
 
-        <!-- 5. Theme Toggle Button -->
-        <button id="theme-toggle-btn"
-          class="p-2.5 rounded-xl bg-white hover:bg-slate-100 dark:bg-surface-850 dark:hover:bg-surface-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-surface-700/60 text-xs sm:text-sm font-medium transition shadow-sm hover:scale-[1.03] active:scale-[0.97]"
-          title="Toggle Light / Dark Mode" aria-label="Toggle Theme">
+        <!-- Theme Toggle Button -->
+        <button id="theme-toggle-btn" class="btn-icon" title="Toggle Light / Dark Mode" aria-label="Toggle Theme">
           <!-- Sun icon (shown in dark mode) -->
-          <svg id="theme-sun-icon" class="w-4 h-4 text-amber-400 hidden" fill="none" stroke="currentColor"
+          <svg id="theme-sun-icon" width="16" height="16" style="color: #f59e0b;" class="hidden" fill="none" stroke="currentColor"
             viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
           <!-- Moon icon (shown in light mode) -->
-          <svg id="theme-moon-icon" class="w-4 h-4 text-indigo-600 hidden" fill="none" stroke="currentColor"
+          <svg id="theme-moon-icon" width="16" height="16" style="color: #4f46e5;" class="hidden" fill="none" stroke="currentColor"
             viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
@@ -166,86 +115,69 @@
     </div>
   </header>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10">
+  <div class="container main-content">
     <!-- Dashboard Section -->
-    <section class="mb-8 space-y-6">
+    <section class="dashboard-section">
       <!-- Stats Grid -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div
-          class="bg-white dark:bg-surface-900/90 border border-slate-200 dark:border-surface-800/80 rounded-2xl p-4 sm:p-5 shadow-sm dark:shadow-none backdrop-blur-sm transition-colors">
-          <div
-            class="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs font-semibold uppercase tracking-wider">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-header">
             <span>Overall Progress</span>
-            <span id="stat-percent" class="text-indigo-600 dark:text-indigo-400 font-mono font-bold">0%</span>
+            <span id="stat-percent" style="color: var(--primary);" class="font-mono">0%</span>
           </div>
-          <div class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-2 font-mono"
-            id="stat-total">
-            0 <span class="text-sm font-normal text-slate-400 dark:text-slate-500">/ 500</span>
+          <div class="stat-number font-mono" id="stat-total">
+            0 <span style="font-size: 0.875rem; font-weight: 400; color: var(--text-subtle);">/ 500</span>
           </div>
-          <div class="w-full bg-slate-100 dark:bg-surface-800 rounded-full h-2 mt-3 overflow-hidden">
-            <div id="stat-progress-bar"
-              class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-300"
-              style="width: 0%"></div>
+          <div class="progress-track">
+            <div id="stat-progress-bar" class="progress-fill" style="width: 0%"></div>
           </div>
         </div>
 
-        <div
-          class="bg-white dark:bg-surface-900/90 border border-emerald-200 dark:border-emerald-900/30 rounded-2xl p-4 sm:p-5 shadow-sm dark:shadow-none backdrop-blur-sm transition-colors">
-          <span
-            class="text-emerald-600 dark:text-emerald-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Easy
+        <div class="stat-card stat-card-easy">
+          <span class="stat-tag stat-tag-easy">
+            <span class="tag-dot"></span> Easy
           </span>
-          <div class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-2 font-mono"
-            id="stat-easy">0</div>
-          <span class="text-xs text-slate-500 dark:text-slate-400 mt-1 block" id="stat-easy-sub">0 / 0 Solved</span>
+          <div class="stat-number stat-number-easy font-mono" id="stat-easy">0</div>
+          <span class="stat-subtext" id="stat-easy-sub">0 / 0 Solved</span>
         </div>
 
-        <div
-          class="bg-white dark:bg-surface-900/90 border border-amber-200 dark:border-amber-900/30 rounded-2xl p-4 sm:p-5 shadow-sm dark:shadow-none backdrop-blur-sm transition-colors">
-          <span
-            class="text-amber-600 dark:text-amber-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Medium
+        <div class="stat-card stat-card-med">
+          <span class="stat-tag stat-tag-med">
+            <span class="tag-dot"></span> Medium
           </span>
-          <div class="text-2xl sm:text-3xl font-extrabold text-amber-600 dark:text-amber-400 mt-2 font-mono"
-            id="stat-med">0</div>
-          <span class="text-xs text-slate-500 dark:text-slate-400 mt-1 block" id="stat-med-sub">0 / 0 Solved</span>
+          <div class="stat-number stat-number-med font-mono" id="stat-med">0</div>
+          <span class="stat-subtext" id="stat-med-sub">0 / 0 Solved</span>
         </div>
 
-        <div
-          class="bg-white dark:bg-surface-900/90 border border-rose-200 dark:border-rose-900/30 rounded-2xl p-4 sm:p-5 shadow-sm dark:shadow-none backdrop-blur-sm transition-colors">
-          <span
-            class="text-rose-600 dark:text-rose-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-rose-500"></span> Hard
+        <div class="stat-card stat-card-hard">
+          <span class="stat-tag stat-tag-hard">
+            <span class="tag-dot"></span> Hard
           </span>
-          <div class="text-2xl sm:text-3xl font-extrabold text-rose-600 dark:text-rose-400 mt-2 font-mono"
-            id="stat-hard">0</div>
-          <span class="text-xs text-slate-500 dark:text-slate-400 mt-1 block" id="stat-hard-sub">0 / 0 Solved</span>
+          <div class="stat-number stat-number-hard font-mono" id="stat-hard">0</div>
+          <span class="stat-subtext" id="stat-hard-sub">0 / 0 Solved</span>
         </div>
       </div>
 
       <!-- Filters & Search Toolbar -->
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
-        <div class="relative flex-1">
-          <svg class="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none"
-            stroke="currentColor" viewBox="0 0 24 24">
+      <div class="toolbar">
+        <div class="search-box">
+          <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
           </svg>
           <input id="search-input" type="text" placeholder="Search questions by name, ID (#1), or pattern..."
-            class="w-full bg-white dark:bg-surface-900 border border-slate-200 dark:border-surface-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 shadow-sm transition" />
+            class="search-input" />
         </div>
 
-        <div class="flex items-center gap-2">
-          <select id="diff-filter"
-            class="bg-white dark:bg-surface-900 border border-slate-200 dark:border-surface-800 rounded-xl px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-sm">
+        <div class="filters-group">
+          <select id="diff-filter" class="filter-select">
             <option value="ALL">All Difficulties</option>
             <option value="Easy">Easy Only</option>
             <option value="Medium">Medium Only</option>
             <option value="Hard">Hard Only</option>
           </select>
 
-          <select id="status-filter"
-            class="bg-white dark:bg-surface-900 border border-slate-200 dark:border-surface-800 rounded-xl px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 shadow-sm">
+          <select id="status-filter" class="filter-select">
             <option value="ALL">All Status</option>
             <option value="UNSOLVED">Unsolved Only</option>
             <option value="SOLVED">Solved Only</option>
@@ -255,61 +187,56 @@
     </section>
 
     <!-- Category Accordions List -->
-    <main id="tracker-container" class="space-y-4">
-      <div class="text-center py-12 text-slate-400 dark:text-slate-500">Loading DSA Patterns...</div>
+    <main id="tracker-container" class="tracker-list">
+      <div class="empty-state">Loading DSA Patterns...</div>
     </main>
   </div>
 
   <!-- Footer Section -->
-  <footer
-    class="mt-16 border-t border-slate-200/80 dark:border-surface-800 bg-white/70 dark:bg-surface-900/60 backdrop-blur-md transition-colors">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12">
-      <div class="flex flex-col sm:flex-row items-start justify-between gap-8">
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <div class="footer-columns">
         
         <!-- Col 1: Brand & Bio -->
-        <div class="space-y-3">
+        <div class="footer-col">
           <div>
-            <span class="text-base font-extrabold text-slate-900 dark:text-white tracking-tight block leading-tight">
+            <span class="footer-name">
               Kartikay Agrawal
             </span>
-            <span class="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold uppercase tracking-wider">
+            <span class="footer-role">
               Full-Stack Developer
             </span>
           </div>
-          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w-sm">
+          <p class="footer-desc">
             Master 500 algorithm problems across structured patterns. Designed to help developers stay consistent and level up their problem-solving skills.
           </p>
         </div>
 
         <!-- Col 2: Contact & Socials -->
-        <div class="space-y-3">
-          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-slate-200 flex items-center gap-2">
+        <div class="footer-col">
+          <h3 class="footer-heading">
             <span>📬</span>
             <span>Connect With Me</span>
           </h3>
-          <div class="space-y-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-            <a href="mailto:kartikayagrawal28@gmail.com"
-              class="flex items-center gap-2 hover:text-indigo-600 dark:hover:text-indigo-400 transition group">
-              <svg class="w-4 h-4 text-slate-400 group-hover:text-indigo-500" fill="none" stroke="currentColor"
-                viewBox="0 0 24 24">
+          <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <a href="mailto:kartikayagrawal28@gmail.com" class="footer-email-link">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               <span>kartikayagrawal28@gmail.com</span>
             </a>
-            <div class="flex items-center gap-2.5 pt-1.5">
+            <div class="footer-social-row">
               <a href="https://github.com/KartikayAgrawal28" target="_blank" rel="noopener noreferrer"
-                class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition shadow-sm"
-                title="GitHub Profile" aria-label="GitHub">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                class="social-icon-btn" title="GitHub Profile" aria-label="GitHub">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                   <path fill-rule="evenodd" clip-rule="evenodd"
                     d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" />
                 </svg>
               </a>
               <a href="https://www.linkedin.com/in/kartikay28" target="_blank" rel="noopener noreferrer"
-                class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition shadow-sm"
-                title="LinkedIn Profile" aria-label="LinkedIn">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                class="social-icon-btn" title="LinkedIn Profile" aria-label="LinkedIn">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
                   <path
                     d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                 </svg>
@@ -321,32 +248,24 @@
       </div>
 
       <!-- Bottom Copyright Line -->
-      <div
-        class="mt-10 pt-6 border-t border-slate-200/80 dark:border-surface-800/80 text-center text-xs text-slate-500 dark:text-slate-400">
+      <div class="footer-bottom">
         <p>© 2026 Kartikay Agrawal. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
   <!-- Random Question Modal -->
-  <div id="random-modal"
-    class="fixed inset-0 bg-black/60 dark:bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div
-      class="bg-white dark:bg-surface-900 border border-slate-200 dark:border-surface-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative animate-in">
-      <button id="close-modal"
-        class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 dark:hover:text-white text-lg">✕</button>
-      <span class="text-xs uppercase font-bold text-indigo-600 dark:text-indigo-400 tracking-wider">🎯 Your Next
-        Challenge</span>
-      <h3 id="modal-title" class="text-xl font-bold text-slate-900 dark:text-white mt-2">Problem Name</h3>
-      <p id="modal-meta" class="text-sm text-slate-500 dark:text-slate-400 mt-1">Array • Sliding Window</p>
-      <div class="mt-6 flex items-center justify-end gap-3">
-        <button id="modal-reroll"
-          class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-surface-800 dark:hover:bg-surface-700 text-slate-700 dark:text-slate-300 text-sm font-medium transition">Roll
-          Another</button>
-        <a id="modal-link" href="#" target="_blank"
-          class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold inline-flex items-center gap-1.5 transition">
+  <div id="random-modal" class="modal-overlay hidden">
+    <div class="modal-dialog">
+      <button id="close-modal" class="modal-close-btn">✕</button>
+      <span class="modal-tag">🎯 Your Next Challenge</span>
+      <h3 id="modal-title" class="modal-title">Problem Name</h3>
+      <p id="modal-meta" class="modal-meta">Array • Sliding Window</p>
+      <div class="modal-actions">
+        <button id="modal-reroll" class="btn-icon" style="padding: 0.5rem 1rem;">Roll Another</button>
+        <a id="modal-link" href="#" target="_blank" class="btn-indigo">
           Solve on LeetCode
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
           </svg>
@@ -355,52 +274,43 @@
     </div>
   </div>
 
-
   <!-- Authentication Modal Window -->
-  <div id="auth-modal"
-    class="fixed inset-0 bg-black/60 dark:bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-    <div
-      class="bg-white dark:bg-surface-900 border border-slate-200 dark:border-surface-700/80 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl relative transition-all duration-300 transform scale-100 overflow-hidden">
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-dialog auth-dialog">
       <!-- Top Decorative Accent -->
-      <div class="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+      <div class="auth-accent-bar"></div>
 
       <!-- Close Button -->
-      <button id="auth-close-btn"
-        class="absolute top-4 right-4 p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-surface-800 transition"
-        title="Close dialog" aria-label="Close modal">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <button id="auth-close-btn" class="modal-close-btn" title="Close dialog" aria-label="Close modal">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
 
       <!-- Modal Header -->
-      <div class="text-center mb-6">
-        <div
-          class="w-12 h-12 mx-auto mb-3 rounded-2xl bg-indigo-500/10 dark:bg-indigo-500/20 border border-indigo-500/20 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shadow-inner">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <div class="auth-header-icon">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         </div>
-        <h2 id="auth-modal-title" class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+        <h2 id="auth-modal-title" style="font-size: 1.5rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.025em;">
           Welcome Back
         </h2>
-        <p id="auth-modal-subtitle" class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
+        <p id="auth-modal-subtitle" style="font-size: 0.8125rem; color: var(--text-muted); margin-top: 0.25rem;">
           Sign in to DSA Tracker to sync your progress across devices
         </p>
       </div>
 
       <!-- Feedback Alert (Hidden by default) -->
-      <div id="auth-alert"
-        class="hidden mb-4 p-3 rounded-xl text-xs sm:text-sm border transition-all duration-200">
+      <div id="auth-alert" class="auth-alert-box hidden">
         <span id="auth-alert-message"></span>
       </div>
 
-      <!-- Google Continue Button (Prominent) -->
-      <button id="google-login-btn" type="button"
-        class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-white hover:bg-slate-50 dark:bg-surface-850 dark:hover:bg-surface-800 text-slate-700 dark:text-slate-200 font-semibold text-sm border border-slate-300 dark:border-surface-700 shadow-sm transition hover:scale-[1.01] active:scale-[0.99]">
-        <!-- Google 4-color SVG Icon -->
-        <svg class="w-5 h-5" viewBox="0 0 24 24">
+      <!-- Google Continue Button -->
+      <button id="google-login-btn" type="button" class="btn-google">
+        <svg width="20" height="20" viewBox="0 0 24 24">
           <path
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
             fill="#4285F4" />
@@ -418,69 +328,59 @@
       </button>
 
       <!-- Divider -->
-      <div class="relative my-6 flex items-center justify-center">
-        <div class="border-t border-slate-200 dark:border-surface-700/80 w-full"></div>
-        <span
-          class="bg-white dark:bg-surface-900 px-3 text-xs uppercase font-medium text-slate-400 dark:text-slate-500 tracking-wider absolute">
-          Or with User ID
-        </span>
+      <div class="auth-divider">
+        <span class="auth-divider-text">Or with User ID</span>
       </div>
 
       <!-- Auth Form (User ID + Password) -->
-      <form id="auth-form" class="space-y-4" onsubmit="return false;">
+      <form id="auth-form" class="auth-form" onsubmit="return false;">
         <!-- User ID Field -->
         <div>
-          <label for="auth-userid"
-            class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+          <label for="auth-userid" class="form-label">
             User ID or Email
           </label>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="form-input-wrapper">
+            <div class="form-input-icon">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
             <input type="text" id="auth-userid" required autocomplete="username"
-              placeholder="e.g. kartikay28 or user@email.com"
-              class="w-full pl-10 pr-4 py-2.5 bg-slate-50 dark:bg-surface-850 border border-slate-200 dark:border-surface-700 rounded-xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition" />
+              placeholder="e.g. kartikay28 or user@email.com" class="form-input" />
           </div>
         </div>
 
         <!-- Password Field -->
         <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label for="auth-password"
-              class="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.375rem;">
+            <label for="auth-password" class="form-label" style="margin-bottom: 0;">
               Password
             </label>
-            <button type="button" id="auth-forgot-btn"
-              class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline">
+            <button type="button" id="auth-forgot-btn" class="link-btn" style="font-size: 0.75rem;">
               Forgot?
             </button>
           </div>
-          <div class="relative">
-            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="form-input-wrapper">
+            <div class="form-input-icon">
+              <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
             <input type="password" id="auth-password" required autocomplete="current-password"
-              placeholder="••••••••"
-              class="w-full pl-10 pr-11 py-2.5 bg-slate-50 dark:bg-surface-850 border border-slate-200 dark:border-surface-700 rounded-xl text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition" />
-            <button type="button" id="auth-toggle-pwd"
-              class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+              placeholder="••••••••" class="form-input form-input-pwd" />
+            <button type="button" id="auth-toggle-pwd" class="pwd-toggle-btn"
               title="Show or hide password" aria-label="Toggle password visibility">
               <!-- Eye Icon -->
-              <svg id="auth-eye-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg id="auth-eye-icon" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
               </svg>
               <!-- Eye Off Icon -->
-              <svg id="auth-eye-off-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor"
+              <svg id="auth-eye-off-icon" width="16" height="16" class="hidden" fill="none" stroke="currentColor"
                 viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
@@ -490,21 +390,19 @@
         </div>
 
         <!-- Remember Me Checkbox -->
-        <div class="flex items-center justify-between pt-1">
-          <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-600 dark:text-slate-400 select-none">
-            <input type="checkbox" id="auth-remember" checked
-              class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300 dark:border-surface-700 dark:bg-surface-800" />
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 0.25rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.75rem; color: var(--text-muted); user-select: none;">
+            <input type="checkbox" id="auth-remember" checked class="custom-checkbox" style="width: 16px; height: 16px;" />
             <span>Remember me</span>
           </label>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" id="auth-submit-btn"
-          class="w-full mt-2 py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold text-sm shadow-lg shadow-indigo-600/25 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2">
+        <button type="submit" id="auth-submit-btn" class="btn-auth-submit">
           <span id="auth-btn-text">Sign In</span>
-          <svg id="auth-btn-spinner" class="w-4 h-4 animate-spin hidden" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor"
+          <svg id="auth-btn-spinner" class="animate-spin hidden" width="16" height="16" fill="none" viewBox="0 0 24 24">
+            <circle opacity="0.25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path opacity="0.75" fill="currentColor"
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
             </path>
           </svg>
@@ -512,11 +410,10 @@
       </form>
 
       <!-- Toggle Sign In / Sign Up Mode -->
-      <div class="text-center mt-6 pt-4 border-t border-slate-100 dark:border-surface-800/80">
-        <p class="text-xs text-slate-500 dark:text-slate-400">
+      <div class="auth-toggle-footer">
+        <p>
           <span id="auth-toggle-prompt">Don't have an account?</span>
-          <button type="button" id="auth-toggle-mode-btn"
-            class="ml-1 text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">
+          <button type="button" id="auth-toggle-mode-btn" class="link-btn" style="margin-left: 0.25rem;">
             Sign up
           </button>
         </p>
