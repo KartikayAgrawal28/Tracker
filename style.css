@@ -77,3 +77,24 @@ body {
   transition: opacity 0.2s ease-in-out;
 }
 
+/* Custom Interactive Cursor Effects */
+@media (hover: hover) and (pointer: fine) {
+  body.cursor-hovering #cursor-ring {
+    width: 52px;
+    height: 52px;
+    border-color: rgba(99, 102, 241, 0.95);
+    background-color: rgba(99, 102, 241, 0.15);
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.4);
+  }
+
+  body.cursor-hovering #cursor-dot {
+    scale: 1.6;
+    background-color: #818cf8;
+  }
+
+  body.cursor-active #cursor-ring {
+    scale: 0.85;
+    background-color: rgba(99, 102, 241, 0.3);
+  }
+}
+

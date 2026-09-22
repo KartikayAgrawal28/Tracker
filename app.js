@@ -668,13 +668,13 @@
       clearAuthAlert();
       if (isSignUpMode) {
         authModalTitle.textContent = 'Create Account';
-        authModalSubtitle.textContent = 'Join to start tracking your DSA journey';
+        authModalSubtitle.textContent = 'Join Code Arena to start tracking your DSA journey';
         authBtnText.textContent = 'Sign Up';
         authTogglePrompt.textContent = 'Already have an account?';
         authToggleModeBtn.textContent = 'Sign in';
       } else {
         authModalTitle.textContent = 'Welcome Back';
-        authModalSubtitle.textContent = 'Sign in to sync your DSA problems across devices';
+        authModalSubtitle.textContent = 'Sign in to Code Arena to sync your progress across devices';
         authBtnText.textContent = 'Sign In';
         authTogglePrompt.textContent = "Don't have an account?";
         authToggleModeBtn.textContent = 'Sign up';
@@ -821,6 +821,83 @@
     }
   });
 
+  // --- INTERACTIVE SMOOTH CUSTOM CURSOR MOVEMENT ---
+  function initCustomCursor() {
+    if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    const dot = document.getElementById('cursor-dot');
+    const ring = document.getElementById('cursor-ring');
+    const glow = document.getElementById('cursor-glow');
+
+    if (!dot || !ring) return;
+
+    let mouseX = -200, mouseY = -200;
+    let ringX = -200, ringY = -200;
+    let isVisible = false;
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+
+      if (!isVisible) {
+        isVisible = true;
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
+        if (glow) glow.style.opacity = '1';
+        ringX = mouseX;
+        ringY = mouseY;
+      }
+
+      dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+    });
+
+    function renderCursor() {
+      // Smooth linear interpolation (physics delay)
+      ringX += (mouseX - ringX) * 0.18;
+      ringY += (mouseY - ringY) * 0.18;
+
+      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+      if (glow) glow.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+
+      requestAnimationFrame(renderCursor);
+    }
+    requestAnimationFrame(renderCursor);
+
+    document.addEventListener('mouseleave', () => {
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
+      if (glow) glow.style.opacity = '0';
+      isVisible = false;
+    });
+
+    document.addEventListener('mouseenter', () => {
+      if (isVisible) {
+        dot.style.opacity = '1';
+        ring.style.opacity = '1';
+        if (glow) glow.style.opacity = '1';
+      }
+    });
+
+    document.addEventListener('mousedown', () => {
+      document.body.classList.add('cursor-active');
+    });
+
+    document.addEventListener('mouseup', () => {
+      document.body.classList.remove('cursor-active');
+    });
+
+    // Detect hover on interactive items
+    document.addEventListener('mouseover', (e) => {
+      const interactive = e.target.closest('button, a, input, select, label, .cursor-pointer, [role="button"]');
+      if (interactive) {
+        document.body.classList.add('cursor-hovering');
+      } else {
+        document.body.classList.remove('cursor-hovering');
+      }
+    });
+  }
+
+  initCustomCursor();
   initAuth();
   init();
 })();
