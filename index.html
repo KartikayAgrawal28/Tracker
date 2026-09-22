@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetCode 500 — DSA Pattern Mastery Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace']
+          },
+          colors: {
+            surface: {
+              950: '#090d16',
+              900: '#0f172a',
+              850: '#151f38',
+              800: '#1e293b',
+              700: '#334155'
+            },
+            primary: {
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5'
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface-950 text-slate-100 min-h-screen selection:bg-indigo-500 selection:text-white">
+  <!-- Fireworks Canvas Layer -->
+  <canvas id="fireworks-canvas"></canvas>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+    <!-- Top Header -->
+    <header class="mb-8 space-y-6 border-b border-surface-800 pb-8">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-3 tracking-wide uppercase">
+            ⚡ 500 Curated Problems • Pattern-Wise Roadmap
+          </div>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+            DSA Pattern Tracker
+          </h1>
+          <p class="text-slate-400 text-sm sm:text-base mt-2 max-w-2xl">
+            A structured pattern-based tracker for mastering Data Structures & Algorithms. Check off solved problems, track category progress, and celebrate every win!
+          </p>
+        </div>
+
+        <!-- Global Action Buttons -->
+        <div class="flex flex-wrap items-center gap-3">
+          <button id="random-btn" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-semibold shadow-lg shadow-indigo-600/20 transition-all hover:scale-[1.02] active:scale-[0.98]">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            Pick Random
+          </button>
+          <button id="toggle-all-btn" class="px-4 py-2.5 rounded-xl bg-surface-850 hover:bg-surface-800 text-slate-300 border border-surface-700/60 text-xs sm:text-sm font-medium transition">
+            Expand All
+          </button>
+          <button id="reset-btn" class="px-3.5 py-2.5 rounded-xl bg-rose-950/30 hover:bg-rose-900/50 text-rose-400 border border-rose-800/40 text-xs sm:text-sm font-medium transition">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-surface-900/90 border border-surface-800/80 rounded-2xl p-4 sm:p-5 backdrop-blur-sm">
+          <div class="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider">
+            <span>Overall Progress</span>
+            <span id="stat-percent" class="text-indigo-400 font-mono">0%</span>
+          </div>
+          <div class="text-2xl sm:text-3xl font-extrabold text-white mt-2 font-mono" id="stat-total">
+            0 <span class="text-sm font-normal text-slate-500">/ 500</span>
+          </div>
+          <div class="w-full bg-surface-800 rounded-full h-2 mt-3 overflow-hidden">
+            <div id="stat-progress-bar" class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <div class="bg-surface-900/90 border border-emerald-900/30 rounded-2xl p-4 sm:p-5 backdrop-blur-sm">
+          <span class="text-emerald-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Easy
+          </span>
+          <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400 mt-2 font-mono" id="stat-easy">0</div>
+          <span class="text-xs text-slate-500 mt-1 block" id="stat-easy-sub">0 / 0 Solved</span>
+        </div>
+
+        <div class="bg-surface-900/90 border border-amber-900/30 rounded-2xl p-4 sm:p-5 backdrop-blur-sm">
+          <span class="text-amber-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Medium
+          </span>
+          <div class="text-2xl sm:text-3xl font-extrabold text-amber-400 mt-2 font-mono" id="stat-med">0</div>
+          <span class="text-xs text-slate-500 mt-1 block" id="stat-med-sub">0 / 0 Solved</span>
+        </div>
+
+        <div class="bg-surface-900/90 border border-rose-900/30 rounded-2xl p-4 sm:p-5 backdrop-blur-sm">
+          <span class="text-rose-400 text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span> Hard
+          </span>
+          <div class="text-2xl sm:text-3xl font-extrabold text-rose-400 mt-2 font-mono" id="stat-hard">0</div>
+          <span class="text-xs text-slate-500 mt-1 block" id="stat-hard-sub">0 / 0 Solved</span>
+        </div>
+      </div>
+
+      <!-- Filters & Search Toolbar -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+        <div class="relative flex-1">
+          <svg class="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <input 
+            id="search-input" 
+            type="text" 
+            placeholder="Search questions by name, ID (#1), or pattern..." 
+            class="w-full bg-surface-900 border border-surface-800 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition"
+          />
+        </div>
+
+        <div class="flex items-center gap-2">
+          <select id="diff-filter" class="bg-surface-900 border border-surface-800 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
+            <option value="ALL">All Difficulties</option>
+            <option value="Easy">Easy Only</option>
+            <option value="Medium">Medium Only</option>
+            <option value="Hard">Hard Only</option>
+          </select>
+
+          <select id="status-filter" class="bg-surface-900 border border-surface-800 rounded-xl px-4 py-2.5 text-sm text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/50">
+            <option value="ALL">All Status</option>
+            <option value="UNSOLVED">Unsolved Only</option>
+            <option value="SOLVED">Solved Only</option>
+          </select>
+        </div>
+      </div>
+    </header>
+
+    <!-- Category Accordions List -->
+    <main id="tracker-container" class="space-y-4">
+      <div class="text-center py-12 text-slate-500">Loading DSA Patterns...</div>
+    </main>
+  </div>
+
+  <!-- Random Question Modal -->
+  <div id="random-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-surface-900 border border-surface-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative animate-in">
+      <button id="close-modal" class="absolute top-4 right-4 text-slate-400 hover:text-white">✕</button>
+      <span class="text-xs uppercase font-bold text-indigo-400 tracking-wider">🎯 Your Next Challenge</span>
+      <h3 id="modal-title" class="text-xl font-bold text-white mt-2">Problem Name</h3>
+      <p id="modal-meta" class="text-sm text-slate-400 mt-1">Array • Sliding Window</p>
+      <div class="mt-6 flex items-center justify-end gap-3">
+        <button id="modal-reroll" class="px-4 py-2 rounded-xl bg-surface-800 hover:bg-surface-700 text-slate-300 text-sm font-medium">Roll Another</button>
+        <a id="modal-link" href="#" target="_blank" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold inline-flex items-center gap-1.5">
+          Solve on LeetCode
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
